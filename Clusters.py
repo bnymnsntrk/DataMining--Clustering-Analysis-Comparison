@@ -26,4 +26,3 @@ x = data[['quarter', 'stock', 'date', 'open', 'high', 'low', 'close', 'volume', 
 #print(data.isna().sum())  # check if there are missing values
 
 data = data.drop(['date'], axis=1)      #we don't need date
-
