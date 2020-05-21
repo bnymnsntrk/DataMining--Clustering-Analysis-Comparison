@@ -45,12 +45,18 @@ data_normalized.head()
 
 data_normalized.to_csv(r'normalized_data.csv', index=False)     #exporting data to check if it has problems
 
+pca = PCA(n_components=2)
+data_2d = pca.fit_transform(data_normalized)
+data_2d = pd.DataFrame(data_2d)
+data_2d.columns = ['x', 'y']
+
 
 def agnes():
     cluster = AgglomerativeClustering(n_clusters=2, affinity='euclidean', linkage='ward')
-    cluster.fit_predict(data_scaled)
+    cluster.fit_predict(data_2d)
     plt.figure(figsize=(10, 7))
-    plt.scatter(data_normalized['previous_weeks_volume'], data_normalized['percent_change_next_weeks_price'], c=cluster.labels_)
+    plt.scatter(data_2d['x'], data_2d['y'],
+                c=cluster.labels_)
     plt.show()
 
 
@@ -77,7 +83,12 @@ def elbow():
 
 def kMeans():
     kmeans = KMeans(n_clusters=4, init='k-means++', max_iter=300, n_init=10, random_state=0)
-    kmeans.fit_predict(data)
+    kmeans.fit_predict(data_2d)
+
+    plt.figure(figsize=(10, 7))
+    plt.scatter(data_2d['x'], data_2d['y'],
+                c=kmeans.labels_)
+    plt.show()
 
     """plt.scatter(X[kmeans == 0, 0], X[kmeans == 0, 1], s=100, c='red', label='Careful')
     plt.scatter(X[kmeans == 1, 0], X[kmeans == 1, 1], s=100, c='blue', label='Standard')
@@ -96,6 +107,6 @@ def kMeans():
 
 agnes()
 timer1 = time.perf_counter()                     #timer starts
-#kMeans()
+kMeans()
 timer2 = time.perf_counter()                     #timer ends
 print(f"\nK Means done in {timer2 - timer1:0.4f} seconds")
